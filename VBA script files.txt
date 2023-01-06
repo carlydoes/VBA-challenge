@@ -1,0 +1,107 @@
+Sub vbascript()
+
+    For Each ws In Worksheets
+    
+        Dim i As Long
+        Dim j As Long
+        
+        Dim Sheetname  As String
+        Dim Tickercount As Long
+        Dim Percentchange As Integer
+        Dim Greatestincrease As Integer
+        Dim Greatestdecrease As Integer
+        Dim Greatesttotal As Integer
+        
+        Dim Column1lastrow As Long
+        Dim Column7lastrow As Long
+        
+            Sheetname = ws.Name
+            
+            ws.Cells(1, 9).Value = "Ticker"
+            ws.Cells(1, 10).Value = "Yearly Change"
+            ws.Cells(1, 11).Value = "Percent Change"
+            ws.Cells(1, 12).Value = "Total Stock Volume"
+            
+            ws.Cells(2, 15).Value = "Greatest % Increase"
+            ws.Cells(3, 15).Value = "Greatest % Decrease"
+            ws.Cells(4, 15).Value = "Greatest Total Volume"
+            ws.Cells(1, 16).Value = "Ticker"
+            ws.Cells(1, 17).Value = "Value"
+            
+            Tickercount = 2
+            j = 2
+            
+            Column1lastrow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+            
+                For i = 2 To Column1lastrow
+                
+                    If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+                    
+                    ws.Cells(Tickercount, 9).Value = ws.Cells(i, 1).Value
+                    ws.Cells(Tickercount, 10).Value = ws.Cells(i, 6).Value - ws.Cells(j, 3).Value
+                     
+                        If ws.Cells(Tickercount, 10).Value < 0 Then
+                        ws.Cells(Tickercount, 10).Interior.ColorIndex = 3
+                    
+                        Else
+                    
+                        ws.Cells(Tickercount, 10).Interior.ColorIndex = 4
+                        
+                        End If
+                        
+                        If ws.Cells(i, 3).Value <> 0 Then
+                        Percentchange = ((ws.Cells(i, 6).Value - ws.Cells(j, 3).Value) / ws.Cells(j, 3).Value)
+                        ws.Cells(Tickercount, 11).Value = Format(Percentchange, "Percent")
+                        
+                        Else
+                        ws.Cells(Tickercount, 11).Value = Format(0, "Percent")
+                    
+                        End If
+                        
+                    ws.Cells(Tickercount, 12).Value = WorksheetFunction.Sum(Range(ws.Cells(j, 7), ws.Cells(i, 7)))
+                    Tickercount = Tickercount + 1
+                    j = i + 1
+                    
+                    End If
+            
+                    
+                Next i
+                    
+            Column7lastrow = ws.Cells(Rows.Count, 9).End(xlUp).Row
+            
+            Greatestincrease = ws.Cells(2, 11).Value
+            Greatestdecrease = ws.Cells(2, 11).Value
+            
+                For i = 2 To Column7lastrow
+                    
+                    If ws.Cells(i, 11).Value > Greatestincrease Then
+                    Greatestincrease = ws.Cells(i, 11).Value
+                    ws.Cells(2, 16).Value = ws.Cells(i, 9).Value
+                
+                    Else
+                
+                    Greatestincrease = Greatestincrease
+                
+                    End If
+                
+                
+                    If ws.Cells(i, 11).Value < Greatestdecrease Then
+                    Greatestdecrease = ws.Cells(i, 11).Value
+                    ws.Cells(3, 16).Value = ws.Cells(i, 9).Value
+                
+                    Else
+                
+                    Greatestdecrease = Greatestdecrease
+                
+                    End If
+                    
+                ws.Cells(2, 17).Value = Format(Greatestincrease, "Percent")
+                ws.Cells(3, 17).Value = Format(Greatestdecrease, "Percent")
+                ws.Cells(4, 17).Value = Format(Greatesttotal, "Percent")
+                    
+            Next i
+            
+    Next ws
+    
+
+End Sub
